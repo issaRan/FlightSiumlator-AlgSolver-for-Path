@@ -1,0 +1,14 @@
+//
+// Created by issa on 1/4/19.
+//
+
+#ifndef MAILSTONE2_MYTESTCLIENTHANDLER_H
+#define MAILSTONE2_MYTESTCLIENTHANDLER_H
+
+
+class MyTestClientHandler {
+
+};
+
+
+#endif //MAILSTONE2_MYTESTCLIENTHANDLER_H
