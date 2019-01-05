@@ -8,6 +8,14 @@
 template <class T>
 class State {
     T state;
+    double cost;
+    State<T> *cameFrom;
+public:
+    State(T State);
+    void setcameFrom(State<T> cameFrom);
+    bool operator==(const State<T>& state);
+    T getState() const;
+    double getCost() const;
 };
 
 

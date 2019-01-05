@@ -6,9 +6,12 @@
 #define MAILSTONE2_DFS_H
 
 
-class DFS {
-
+#include "Searcher.h"
+template <class T>
+class DFS : public Searcher<T>{
+    Solution<T> search(ISearchable<T>* searchable);
 };
+
 
 
 #endif //MAILSTONE2_DFS_H

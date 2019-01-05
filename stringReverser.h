@@ -5,16 +5,18 @@
 #include <string>
 #include <algorithm>
 #include "Solver.h"
+
 using namespace std;
-template <class P,class S>
-class stringReverser : public Solver<string,string>{
+
+template<class P, class S>
+class stringReverser : public Solver<string, string> {
 public:
     string solve(string problem);
 };
 
 template<class P, class S>
 string stringReverser<P, S>::solve(string problem) {
-    reverse(problem.begin(),problem.end());
+    reverse(problem.begin(), problem.end());
     return problem;
 }
 
