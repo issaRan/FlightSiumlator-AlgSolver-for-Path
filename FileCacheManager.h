@@ -19,27 +19,22 @@ public:
     void loadMap();
     void saveOnFile(string problem,string solution);
 };
-
 template<class P, class S>
 bool FileCacheManager<P, S>::isSolutionExist(P problem) {
-    return false;
-}
 
+}
 template<class P, class S>
 S FileCacheManager<P, S>::getSolution(P problem) {
     return nullptr;
 }
-
 template<class P, class S>
 void FileCacheManager<P, S>::saveSolution(P problem, S solution) {
 
 }
-
 template<class P, class S>
 void FileCacheManager<P, S>::loadMap() {
 
 }
-
 template<class P, class S>
 void FileCacheManager<P, S>::saveOnFile(string problem, string solution) {
 

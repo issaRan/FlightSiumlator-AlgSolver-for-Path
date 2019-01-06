@@ -11,6 +11,7 @@ using namespace std;
 template<class P, class S>
 class stringReverser : public Solver<string, string> {
 public:
+    stringReverser() = default;
     string solve(string problem);
 };
 

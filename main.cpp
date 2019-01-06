@@ -1,6 +1,6 @@
 #include <iostream>
-
+#include "Solver.h"
+#include "stringReverser.h"
 int main() {
-    std::cout << "Hello, World!" << std::endl;
-    return 0;
+    Solver<string,string>* solver = new stringReverser();
 }
