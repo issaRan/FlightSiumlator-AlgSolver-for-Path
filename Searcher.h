@@ -6,46 +6,55 @@
 #include <queue>
 #include <list>
 #include <unordered_set>
-template<typename T>
-class Searcher : public ISearcher<T> {
+#include <sstream>
+
+template<class S, class T>
+class Searcher : public ISearcher<S, T> {
     int NumberOfNodesEvaluated{};
-    unordered_set <State<T>> closed;
+    unordered_set<State<T>> closed;
 protected:
-    priority_queue <State<T>> openList;
-    State<T> popOpenList(){
+    priority_queue<State<T>> openList;
+
+    State<T> popOpenList() {
         NumberOfNodesEvaluated++;
-        if(!this->openList.empty()){
+        if (!this->openList.empty()) {
             State<T> emptyTheList = this->openList.top();
             this->openList.pop();
             return emptyTheList;
         }
         return NULL;
     }
-    void addToOpenList(State<T> state){
+
+    void addToOpenList(State<T> state) {
         openList.push(state);
     }
-    bool openContains(State<T> state){
-        for(State<T> i:openList){
-            if(i.operator==(state)){
+
+    bool openContains(State<T> state) {
+        for (State<T> i:openList) {
+            if (i.operator==(state)) {
                 return true;
             }
         }
         return false;
     }
+
     //TODO edit
-    Solution<T> backTrace(State<T> start,State<T> final){
-        Solution<T> solution;
-        while (start != final){
-            solution.
-            final = final.getState();
+    S backTrace(State<T> final) {
+        S solution;
+        ostringstream ss;
+        ss << final.getState();
+        while (final = final.getFather() != NULL) {
+            ss << "->" >> final.getState();
         }
+        solution = ss.str();
         return solution;
     }
+
     //TODO addSet
-    void adjustPriority(priority_queue<State<T>> openList,State<T> state){
+    void adjustPriority(priority_queue<State<T>> openList, State<T> state) {
         State<T> nearByState = NULL;
-        for(auto i : openList){
-            if(nearByState == state){
+        for (auto i : openList) {
+            if (nearByState == state) {
                 openList.pop();
                 setDeterminedCost(nearByState);
                 openList.push(nearByState);
@@ -53,13 +62,17 @@ protected:
             }
         }
     }
+
 public:
     Searcher() : NumberOfNodesEvaluated(0) {}
-    virtual Solution<T> search(ISearchable<T>* searchable) = 0;
-    int openListSize(){
+
+    virtual S search(ISearchable<T> *searchable) = 0;
+
+    int openListSize() {
         return static_cast<int>(openList.size());
     }
-    int getNumberOfNodesEvaluated(){
+
+    int getNumberOfNodesEvaluated() {
         return this->NumberOfNodesEvaluated;
     }
 };

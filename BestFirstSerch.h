@@ -4,9 +4,9 @@
 #include "ISearcher.h"
 #include "Searcher.h"
 
-template <class T>
-class BestFirstSerch :public Searcher<T>{
-    Solution<T> search(ISearchable<T>* searchable);
+template <class S,class T>
+class BestFirstSerch :public Searcher<S,T>{
+    S search(ISearchable<T>* searchable);
 };
 
 

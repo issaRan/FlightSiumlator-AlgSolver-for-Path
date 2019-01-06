@@ -16,6 +16,7 @@ public:
     bool operator==(const State<T>& state);
     T getState() const;
     double getCost() const;
+    State<T> getFather() const;
 };
 
 

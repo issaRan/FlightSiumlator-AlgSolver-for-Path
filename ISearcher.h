@@ -4,9 +4,9 @@
 #include "ISearchable.h"
 #include "Solution.h"
 using namespace std;
-template<class T>
+template<class S,class T>
 class ISearcher {
-    virtual Solution<T> search(ISearchable<T>* ISearchable) = 0;
+    virtual S search(ISearchable<T>* ISearchable) = 0;
     virtual int getNumberOfNodesEvaluted() = 0;
 };
 

@@ -25,3 +25,8 @@ bool State<T>::operator==(const State<T> &state) {
     return (this->cameFrom = state.cameFrom) && (this->state = state.state);
 }
 
+template<class T>
+State<T> State<T>::getFather() const {
+    return this->cameFrom;
+}
+

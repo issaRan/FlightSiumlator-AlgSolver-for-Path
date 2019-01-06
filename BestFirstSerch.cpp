@@ -3,8 +3,8 @@
 //
 
 #include "BestFirstSerch.h"
-template<class T>
-Solution<T> BestFirstSerch<T>::search(ISearchable<T> *searchable) {
+template<class S,class T>
+S BestFirstSerch<S,T>::search(ISearchable<T> *searchable) {
     addToOpenList(searchable->getInitialState());
     unordered_set<State<T>> closeSet = new unordered_set<State<T>>();
     while (this->openListSize() > 0){
