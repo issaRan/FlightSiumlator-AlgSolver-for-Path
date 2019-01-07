@@ -14,7 +14,7 @@ template <class Problem,class Solution>
 class StringConvertor{
 public:
     virtual string ProblemToString(Problem problem) = 0;
-    virtual Problem stringToProblem(string problem) = 0;
+    virtual Problem stringToProblem(const string &problem) = 0;
     virtual string solutionToString(Solution solution) = 0;
-    virtual Solution stringToSolution(string solution) = 0;
+    virtual Solution stringToSolution(const string &problem) = 0;
 };

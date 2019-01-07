@@ -7,13 +7,25 @@
 
 class matrix : ISearchable<pair<int, int>> {
 private:
-    int arr[2][2];
+    int length;
+    int width;
+    int** arr;
     map<pair<int, int>, vector<State<pair<int, int>>>> adj;
 public:
-    matrix() {
-
+    matrix(int** arr, int length, int width) {
+        this->length = length;
+        this->width = width;
+        this->arr = arr;
     }
-
+    int getWidth(){
+        return this->width;
+    }
+    int getLength(){
+        return this->length;
+    }
+    int **getArr(){
+        return this->arr;
+    }
     State<pair<int, int>> getInitialState() {
         State<pair<int, int>> startState(make_pair(0, 0));
         startState.setCost(arr[0][0]);
@@ -21,7 +33,7 @@ public:
     }
 
     bool isGoalState(State<pair<int, int>> state) {
-        return state ==
+        //return state ==
     }
 
     vector<State<pair<int, int>>> getAllPossibleState(State<pair<int, int>> state) {

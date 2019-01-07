@@ -35,7 +35,7 @@ public:
     }
 
     State<T> setCost(double cost) const {
-        this->cost = cost;
+        //this->cost = cost;
     }
 };
 
