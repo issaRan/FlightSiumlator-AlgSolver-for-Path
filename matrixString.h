@@ -47,8 +47,8 @@ public:
         return new matrix(arr, length, width);
     }
 
-    string solutionToString(string solution) {
-        return solution;
+    string solutionToString(string solutionOfProblem) {
+        return solutionOfProblem;
     }
 
     string stringToSolution(const string &solution) {

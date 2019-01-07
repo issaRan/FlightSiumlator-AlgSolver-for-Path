@@ -15,7 +15,7 @@ int main() {
     theMap[0][2] = 3;
     theMap[1][0] = 4;
     theMap[1][1] = 5;
-    theMap[1][2] = 6;
+    theMap[1][2] = 7;
     matrixString a;
     auto * m = new matrix(theMap,2,3);
     cout << a.ProblemToString(m) << endl;

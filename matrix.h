@@ -7,13 +7,13 @@
 
 class matrix : ISearchable<pair<int, int>> {
 private:
-    int length;
+    int lengthOfMatrix;
     int width;
     int** arr;
     map<pair<int, int>, vector<State<pair<int, int>>>> adj;
 public:
     matrix(int** arr, int length, int width) {
-        this->length = length;
+        this->lengthOfMatrix = length;
         this->width = width;
         this->arr = arr;
     }
@@ -21,7 +21,7 @@ public:
         return this->width;
     }
     int getLength(){
-        return this->length;
+        return this->lengthOfMatrix;
     }
     int **getArr(){
         return this->arr;
