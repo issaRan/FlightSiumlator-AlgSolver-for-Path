@@ -3,7 +3,7 @@
 //
 
 #include <sstream>
-#include "StringConvertor.h"
+//#include "StringConvert.h"
 
 #ifndef MAILSTONE2_MATRIXSTRING_H
 #define MAILSTONE2_MATRIXSTRING_H
@@ -11,8 +11,8 @@
 #endif //MAILSTONE2_MATRIXSTRING_H
 
 //template <class Problem,class Solution>
-
-class matrixString : StringConvertor<matrix *, string> {
+/*
+class matrixString : StringConvert<matrix *, string> {
 public:
     string ProblemToString(matrix *m) {
         int length = m->getLength();
@@ -55,3 +55,4 @@ public:
         return solution;
     }
 };
+ */

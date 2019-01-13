@@ -8,31 +8,42 @@
 
 #include "ClientHandler.h"
 #include "Solver.h"
-#include "CacheManger.h"
+#include "FileCacheManager.h"
 
 template<class P, class S>
 class MyTestClientHandler : public ClientHandler {
     Solver<P, S> *solver;
     CacheManger<P, S> *cacheManger;
 public:
-    MyTestClientHandler(Solver<P, S> *solver, CacheManger<P, S> *cacheManger) {
-        this->solver = solver;
+    MyTestClientHandler(Solver<P, S> *solve, CacheManger<P, S> *cacheManger) {
+        this->solver = solve;
+        //this->stringConvert = stringConvert;
         this->cacheManger = cacheManger;
     }
 
-    void handleCLient(string str);
+    void handleClient(ConnectionManager *connectionManager) override;
 };
 
 template<class P, class S>
-void MyTestClientHandler<P, S>::handleCLient(string str) {
-    string afterRevers;
-
-    if (this->cacheManger->isSolutionExist(str)) {
-        this->cacheManger->getSolution(str);
-    } else {
-        afterRevers = this->solver->solve(str);
-        this->cacheManger->saveSolution(str, afterRevers);
+void MyTestClientHandler<P, S>::handleClient(ConnectionManager *connectionManager) {
+    string line;
+    //this->cacheManger->loadMap();
+    line = connectionManager->readLine();
+    while (line != "end\r\n") {
+        if(line == "end"){
+            break;
+        }
+        if (cacheManger->isSolutionExist(line)) {
+            connectionManager->sendLine(cacheManger->getSolution(line));
+        }
+        else if (!line.empty()) {
+            S solution = this->solver->solve(line);
+            this->cacheManger->saveSolution(line, solution);
+            connectionManager->sendLine(solution);
+        }
+        line = connectionManager->readLine();
     }
+
 }
 
 

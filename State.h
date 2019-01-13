@@ -19,7 +19,7 @@ public:
     }
 
     bool operator==(const State<T> &state) {
-        return (this->cameFrom = state.cameFrom) && (this->state = state.state);
+        return this->state == state.state;
     }
 
     T getState() const {
@@ -34,8 +34,8 @@ public:
         return cameFrom;
     }
 
-    State<T> setCost(double cost) const {
-        //this->cost = cost;
+    void setCost(double cost) {
+        this->cost = cost;
     }
 };
 
