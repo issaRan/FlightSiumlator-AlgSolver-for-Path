@@ -11,16 +11,16 @@
 #endif //MAILSTONE2_MATRIXSTRING_H
 
 //template <class Problem,class Solution>
-
+/*
 class matrixString : StringConvertor<matrix *, string> {
 public:
     string ProblemToString(matrix *m) {
-        int length = m->getLength();
+        int height = m->getHeight();
         int width = m->getWidth();
         int** arr = m->getArr();
         ostringstream ss;
-        ss << length << " " << width << ";";
-        for (int i = 0; i < length; i++) {
+        ss << height << " " << width << ";";
+        for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
                 ss << arr[i][j] << ",";
             }
@@ -55,3 +55,4 @@ public:
         return solution;
     }
 };
+ */

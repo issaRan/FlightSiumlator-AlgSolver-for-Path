@@ -3,68 +3,88 @@
 #define MAILSTONE2_MATRIX_H
 
 #include <map>
+#include <queue>
 #include "ISearchable.h"
-
-class matrix : ISearchable<pair<int, int>> {
+class matrix : public ISearchable<pair<int, int>> {
 private:
-    int lengthOfMatrix;
+    pair<int, int> source, goal;
+    int height;
     int width;
-    int** arr;
-    map<pair<int, int>, vector<State<pair<int, int>>>> adj;
+    int **arr;
 public:
-    matrix(int** arr, int length, int width) {
-        this->lengthOfMatrix = length;
-        this->width = width;
-        this->arr = arr;
-    }
-    int getWidth(){
+    matrix(int **arr, int height, int width, pair<int, int> source, pair<int,int> goal) : arr(arr), height(height),
+    width(width), source(source), goal(goal) {}
+
+    int getWidth() {
         return this->width;
     }
-    int getLength(){
-        return this->lengthOfMatrix;
+
+    int getHeight() {
+        return this->height;
     }
-    int **getArr(){
+
+    int **getArr() {
         return this->arr;
     }
-    State<pair<int, int>> getInitialState() {
-        State<pair<int, int>> startState(make_pair(0, 0));
-        startState.setCost(arr[0][0]);
+
+    State<pair<int, int>> *getInitialState() {
+        State<pair<int, int>> *startState= new State<pair<int, int>>(make_pair(0, 0));
+        startState->setCost(arr[0][0]);
         return startState;
     }
 
-    bool isGoalState(State<pair<int, int>> state) {
-        //return state ==
+    bool isGoalState(State<pair<int, int>> *state) {
+        // the lower-bottom cell's coordinates.
+        pair<int, int> goal = make_pair(this->height - 1, this->width - 1);
+        // pairs comparison.
+        return state->getState() == goal;
     }
 
-    vector<State<pair<int, int>>> getAllPossibleState(State<pair<int, int>> state) {
-        int height = sizeof(arr) / sizeof(arr[0]);
-        int width = sizeof(this->arr[0]) / sizeof(int);
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                pair<int, int> tempair = make_pair(i, j);
-                if (i != 0) {
-                    State<pair<int, int>> up = State<pair<int, int>>(make_pair(i - 1, j));
-                    up.setCost(this->arr[i][j]);
-                    this->adj[tempair].push_back(up);
-                }
-                if (i != height - 1) {
-                    State<pair<int, int>> down = State<pair<int, int>>(make_pair(i + 1, j));
-                    down.setCost(this->arr[i][j]);
-                    this->adj[tempair].push_back(down);
-                }
-                if (j != 0) {
-                    State<pair<int, int>> left = State<pair<int, int>>(make_pair(i, j - 1));
-                    left.setCost(this->arr[i][j]);
-                    this->adj[tempair].push_back(left);
-                }
-                if (i != width - 1) {
-                    State<pair<int, int>> right = State<pair<int, int>>(make_pair(i, j + 1));
-                    right.setCost(this->arr[i][j]);
-                    this->adj[tempair].push_back(right);
-                }
-
-            }
+    vector<State<pair<int, int>> *> getAllPossibleState(State<pair<int, int>> *state) {
+        vector<State<pair<int, int>>*> states;
+        // i, j coordinates.
+        int i = state->getState().first, j = state->getState().second;
+        // Up.
+        if (i != 0 && arr[i - 1][j] >= 0) {
+            State<pair<int, int>> *up = new State<pair<int, int>>(make_pair(i - 1, j));
+            up->setCost(this->arr[i - 1][j] + state->getCost());
+            this->setHeuristic(up);
+            states.push_back(up);
         }
+        // Down.
+        if (i != this->height - 1 && arr[i + 1][j] >= 0) {
+            State<pair<int, int>> *down = new State<pair<int, int>>(make_pair(i + 1, j));
+            down->setCost(this->arr[i + 1][j] + state->getCost());
+            this->setHeuristic(down);
+            states.push_back(down);
+        }
+        // Left.
+        if (j != 0 && arr[i][j - 1] >= 0) {
+            State<pair<int, int>> *left = new State<pair<int, int>>(make_pair(i, j - 1));
+            left->setCost(this->arr[i][j - 1] + state->getCost());
+            this->setHeuristic(left);
+            states.push_back(left);
+        }
+        // Right.
+        if (j != width - 1 && arr[i][j + 1] >= 0) {
+            State<pair<int, int>> *right = new State<pair<int, int>>(make_pair(i, j + 1));
+            right->setCost(this->arr[i][j + 1] + state->getCost());
+            this->setHeuristic(right);
+            states.push_back(right);
+        }
+        // Set the pie.
+        for (vector<State<pair<int, int>>*>::iterator it = states.begin(); it != states.end(); it++) {
+            (*it)->setcameFrom(state);
+        }
+        return states;
+
+    }
+    pair<int, int> getGoal(){
+        return this->goal;
+    }
+    void setHeuristic(State<pair<int, int>> *state){
+        pair<double, double> current = state->getState();
+        state->setHeuristic(abs(current.first - this->goal.first) + abs(current.second - this->goal.second));
     }
 };
 
