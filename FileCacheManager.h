@@ -55,6 +55,7 @@ vector<string> FileCacheManager<P, S>::getSolutionString(P problem) {
         }
     }
     //return NULL;
+}
 
 template<class P, class S>
 void FileCacheManager<P, S>::saveSolution(P problem, S solution) {
