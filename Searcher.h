@@ -52,27 +52,10 @@ public:
     }
 
     S backtrace(State<T> *state) {
-        S v;
+        S v = {state};
         State<T> *father;
-        while ((father = state->getFather()) != NULL) {
-            double pfirst = father->getState().first, psecond = father->getState().second;
-            double sfirst = state->getState().first, ssecond = state->getState().second;
-            if (pfirst > sfirst){
-                v.push_back("up");
-            }
-            else if (pfirst < sfirst){
-                v.push_back("down");
-            }
-            else if (psecond > ssecond){
-                v.push_back("left");
-            }
-            else if (psecond < ssecond){
-                v.push_back("right");
-            }
-            else {
-                throw "Invalid path - A state does not change.";
-            }
-            state = father;
+        while ((state = state->getFather()) != NULL) {
+            v.push_back(state);
         }
         std::reverse(v.begin(), v.end());
         return v;

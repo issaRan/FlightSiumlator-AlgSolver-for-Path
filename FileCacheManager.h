@@ -18,23 +18,26 @@
 
 template<class P, class S>
 class FileCacheManager : public CacheManger<P, S> {
+    // map for mapping problems to solutions in vector<string> formats.
     map<vector<string>, vector<string>> problemsAndSolutions;
+    // a converter for matrixes and their solution.
     StringConvert<P, S> *convert;
 public:
+    // Constructor.
     FileCacheManager(StringConvert<P, S> *convert) {
         this->convert = convert;
     }
-
+    //Checking if solution exists in the map.
     virtual bool isSolutionExist(P problem);
-
+    //Getting the solution of a given problem from a file.
     virtual vector<string> getSolutionString(P problem);
-
+    //Saving a solution in the map and in the file.
     virtual void saveSolution(P problem, S solution);
-
+    //Loads all problems and solutions.
     void loadMap();
-
+    //Saves a problem and a solution on the file in vector<string> format.
     void saveOnFile(const vector<string> &problem, const vector<string> &solution);
-
+    //Splits a string to vector of strings using ',' character.
     vector<string> splitValues(const string &line);
 };
 
@@ -52,7 +55,7 @@ vector<string> FileCacheManager<P, S>::getSolutionString(P problem) {
         }
     }
     //return NULL;
-}
+
 template<class P, class S>
 void FileCacheManager<P, S>::saveSolution(P problem, S solution) {
     vector<string> problemRepresentByString = this->convert->ProblemToString(problem);
@@ -69,8 +72,8 @@ void FileCacheManager<P, S>::loadMap() {
     while (getline(solutions, line)) {
         do {
             p.push_back(line);
-        } while (getline(solutions, line) && (line != "@"));
-        while (getline(solutions, line) && (line != "$"))
+        } while (getline(solutions, line) && (line != "@EndOfProblem@"));
+        while (getline(solutions, line) && (line != "$EndOfSolution$"))
             s.push_back(line);
     }
         this->problemsAndSolutions.insert(make_pair(p, s));
@@ -83,11 +86,11 @@ void FileCacheManager<P, S>::saveOnFile(const vector<string> &problem, const vec
     for (string str : problem){
         sol << str << endl;
     }
-    sol << "@" << endl;
+    sol << "@EndOfProblem@" << endl;
     for (string str : solution){
         sol << str << endl;
     }
-    sol << "$" << endl;
+    sol << "$EndOfSolution$" << endl;
     sol.close();
 }
 

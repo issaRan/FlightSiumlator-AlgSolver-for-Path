@@ -12,14 +12,41 @@
 
 //template<class S, class T>
 class SearchableSolver : public Solver<matrix, vector<string>> {
-    ISearcher<vector<string>,pair<int,int>> *searcher;
+    ISearcher<vector<State<pair<int, int>>*>,pair<int,int>> *searcher;
     //ISearchable<T> *iSearchable;
 public:
-    SearchableSolver(ISearcher<vector<string>,pair<int,int>> * search){
+    SearchableSolver(ISearcher<vector<State<pair<int, int>>*>,pair<int,int>> * search){
         this->searcher = search;
     }
     vector<string> solve(matrix* problem){
-        return this->searcher->search(problem);
+        vector<State<pair<int, int>>*> v = this->searcher->search(problem);
+        vector<string> vStr;
+        vector<State<pair<int, int>>*>::iterator father;
+        for (vector<State<pair<int, int>>*>::iterator current = v.begin();
+        current != v.end() && father != v.end(); current++){
+            father = current;
+            father++;
+            if (father == v.end())
+                break;
+            double pfirst = (*father)->getState().first, psecond = (*father)->getState().second;
+            double sfirst = (*current)->getState().first, ssecond = (*current)->getState().second;
+            if (pfirst < sfirst){
+                vStr.push_back("up");
+            }
+            else if (pfirst > sfirst){
+                vStr.push_back("down");
+            }
+            else if (psecond < ssecond){
+                vStr.push_back("left");
+            }
+            else if (psecond > ssecond){
+                vStr.push_back("right");
+            }
+            else {
+                throw "Invalid path - A state does not change.";
+            }
+        }
+        return vStr;
     }
 };
 

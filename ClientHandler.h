@@ -11,6 +11,7 @@
 
 class ClientHandler{
 public:
+    // Defines and acts according to the protocol.
     virtual void handleClient(ConnectionManager* connectionManager) = 0;
 };
 #endif //MAILSTONE2_CLIENTHANDLER_H

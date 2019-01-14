@@ -12,7 +12,6 @@ class BestFirstSerch : public Searcher<S,T>{
     MyPriorityQueue<State<T> *, ComparePriority<T>> opened;
 public:
     S search(ISearchable<T> *searchable) {
-        unordered_set<State<T>*> &salim = this->closed;
         this->addToOpenList(searchable->getInitialState());
         while (!this->opened.empty()) {
             State<T> *n = this->popOpenList();
