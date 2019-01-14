@@ -3,7 +3,7 @@
 //
 
 #include <sstream>
-#include "StringConvertor.h"
+//#include "StringConvert.h"
 
 #ifndef MAILSTONE2_MATRIXSTRING_H
 #define MAILSTONE2_MATRIXSTRING_H
