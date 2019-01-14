@@ -14,11 +14,13 @@
 #include "DFS.h"
 #include "matrixConvert.h"
 #include "SearchableSolver.h"
+#include "Astar.h"
 
 //#include "Searcher.h"
 //template <class p,class solution>
 int main(int argc, char* argv[]) {
-    int port = 5400;
+    /* $$$$
+     int port = 5400;
     StringConvert<matrix,vector<string>> *convert = new matrixConvert<matrix,vector<string>>();
     server_side::Server *s = new MySerialServer();
     ISearcher<vector<string>, pair<int, int>> *sason = new BestFirstSerch<vector<string>, pair<int, int>>();
@@ -26,7 +28,8 @@ int main(int argc, char* argv[]) {
     Solver<matrix,vector<string>> *rev = new SearchableSolver(sason);
     ClientHandler *c = new MyTestClientHandler<matrix,vector<string>>(rev,cacheManger);
     s->open(port, c);
-    /*
+     $$$$
+     */
     int **theMap = new int *[3];
     for (int i = 0; i < 3; i++)
         theMap[i] = new int[3];
@@ -39,14 +42,22 @@ int main(int argc, char* argv[]) {
     theMap[2][0] = 1000;
     theMap[2][1] = 500000;
     theMap[2][2] = 5;
-    ISearchable<pair<int, int>> *m = new matrix(theMap, 3, 3, make_pair(0,0), make_pair(2,2));
-    ISearcher<vector<string>, pair<int, int>> *s = new BestFirstSerch<vector<string>, pair<int,
+    matrix *m = new matrix(theMap, 3, 3, make_pair(0,0), make_pair(2,2));
+    ISearcher<vector<string>, pair<int, int>> *s = new Astar<vector<string>, pair<int,
             int>>();
-    vector<string> sason = s->search(m);
-    for (string i : sason){
+    Solver<matrix, vector<string>> *solver = new SearchableSolver(s);
+    FileCacheManager<matrix, vector<string>> cache(new matrixConvert());
+    vector<string> sason;
+    cache.loadMap();
+    if (cache.isSolutionExist(*m))
+        sason = cache.getSolutionString(*m);
+    else {
+        sason = solver->solve(m);
+        cache.saveSolution(*m, sason);
+    }
+    for (string i : sason) {
         cout << i << endl;
     }
-     */
     /*
     int port = 5400;
     StringConvert<string,string> *convert = new convertTheString<string,string>();

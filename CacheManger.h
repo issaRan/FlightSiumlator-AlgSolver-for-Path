@@ -12,7 +12,7 @@ template <class P,class S>
 class CacheManger {
 public:
     virtual bool isSolutionExist(P problem) = 0;
-    virtual string getSolutionString(P problem) = 0;
+    virtual vector<string> getSolutionString(P problem) = 0;
     virtual void saveSolution(P problem, S solution) = 0;
 };
 

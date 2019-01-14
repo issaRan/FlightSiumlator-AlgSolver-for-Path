@@ -40,7 +40,7 @@ public:
 
 template<class P, class S>
 bool FileCacheManager<P, S>::isSolutionExist(P problem) {
-    //this->problemsAndSolutions.count(problem) != 0;
+    return this->problemsAndSolutions.count(this->convert->ProblemToString(problem)) != 0;
 }
 template<class P, class S>
 vector<string> FileCacheManager<P, S>::getSolutionString(P problem) {
@@ -70,8 +70,8 @@ void FileCacheManager<P, S>::loadMap() {
         do {
             p.push_back(line);
         } while (getline(solutions, line) && (line != "@"));
-        while (getline(solutions, line) && (line != "$"));
-        s.push_back(line);
+        while (getline(solutions, line) && (line != "$"))
+            s.push_back(line);
     }
         this->problemsAndSolutions.insert(make_pair(p, s));
 }

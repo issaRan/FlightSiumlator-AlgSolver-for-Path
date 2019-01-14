@@ -15,16 +15,18 @@ string ConnectionManager::readLine() {
     }
     stringstream ss;
     string toSend;
-    ss<<buffer;
-    ss>>toSend;
+    ss << buffer;
+    ss >> toSend;
     return toSend;
 }
 
-void ConnectionManager::sendLine(string msg) {
-
-    int n = ::send(sockfd, (char *) msg.c_str(), strlen((char *) msg.c_str()), 0);
-    if (n < 0) {
-        perror("ERROR writing to socket");
-        exit(1);
+void ConnectionManager::sendLine(vector<string> msg) {
+    int n;
+    for (string str : msg) {
+        n = ::send(sockfd, (char *) str.c_str(), strlen((char *) str.c_str()), 0);
+        if (n < 0) {
+            perror("ERROR writing to socket");
+            exit(1);
+        }
     }
 }

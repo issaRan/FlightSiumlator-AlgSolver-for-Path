@@ -8,7 +8,6 @@
 #include "StringConvert.h"
 #include "matrix.h"
 
-template<class Problem, class solution>
 class matrixConvert : public StringConvert<matrix, vector<string>> {
 
     vector<string> ProblemToString(matrix problem) {

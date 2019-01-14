@@ -13,11 +13,7 @@ private:
     int **arr;
 public:
     matrix(int **arr, int height, int width, pair<int, int> source, pair<int,int> goal) : arr(arr), height(height),
-                                                                                          width(width), source(source), goal(goal) {}
-
-    pair<int, int> getGoal(){
-        return this->goal;
-    }
+    width(width), source(source), goal(goal) {}
     pair<int, int> getSource(){
         return this->source;
     }
@@ -54,24 +50,28 @@ public:
         if (i != 0 && arr[i - 1][j] >= 0) {
             State<pair<int, int>> *up = new State<pair<int, int>>(make_pair(i - 1, j));
             up->setCost(this->arr[i - 1][j] + state->getCost());
+            this->setHeuristic(up);
             states.push_back(up);
         }
         // Down.
         if (i != this->height - 1 && arr[i + 1][j] >= 0) {
             State<pair<int, int>> *down = new State<pair<int, int>>(make_pair(i + 1, j));
             down->setCost(this->arr[i + 1][j] + state->getCost());
+            this->setHeuristic(down);
             states.push_back(down);
         }
         // Left.
         if (j != 0 && arr[i][j - 1] >= 0) {
             State<pair<int, int>> *left = new State<pair<int, int>>(make_pair(i, j - 1));
             left->setCost(this->arr[i][j - 1] + state->getCost());
+            this->setHeuristic(left);
             states.push_back(left);
         }
         // Right.
         if (j != width - 1 && arr[i][j + 1] >= 0) {
             State<pair<int, int>> *right = new State<pair<int, int>>(make_pair(i, j + 1));
             right->setCost(this->arr[i][j + 1] + state->getCost());
+            this->setHeuristic(right);
             states.push_back(right);
         }
         // Set the pie.
@@ -80,6 +80,13 @@ public:
         }
         return states;
 
+    }
+    pair<int, int> getGoal(){
+        return this->goal;
+    }
+    void setHeuristic(State<pair<int, int>> *state){
+        pair<double, double> current = state->getState();
+        state->setHeuristic(abs(current.first - this->goal.first) + abs(current.second - this->goal.second));
     }
 };
 
