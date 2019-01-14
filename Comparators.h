@@ -15,12 +15,13 @@ public:
         return a->getCost() > b->getCost();
     }
 };
-
+/*
 template<class T>
 struct ManhattanDistances {
 public:
     bool operator()(State<T>* a, State<T>* b){
-        return a->getCost() + a->getHeuristic() > b->getCost() + b->getHeuristic();
+        return a->getCost() + getHeuristic(a->getState(), goal) > b->getCost()
+        + getHeuristic(b->getState(), goal);
     }
     double getHeuristic(pair<double, double> source){
         double sum = 0;
@@ -29,5 +30,5 @@ public:
         return sum*10;
 
     }
-};
+};*/
 #endif //MAILSTONE2_COMPAREPRIORITY_H

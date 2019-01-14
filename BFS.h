@@ -5,10 +5,11 @@
 #ifndef MAILSTONE2_BFS_H
 #define MAILSTONE2_BFS_H
 
-#include "QueueSearcher.h"
+//#include "QueueSearcher.h"
+#include "Searcher.h"
 
 template <class solution,class T>
-class BFS : public QueueSearcher<solution, T>{
+class BFS : public Searcher<solution, T>{
     queue<State<T> *> opened;
 public:
     solution search(ISearchable<T>* searchable){

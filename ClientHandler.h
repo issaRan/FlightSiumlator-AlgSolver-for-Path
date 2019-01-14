@@ -7,7 +7,10 @@
 
 #include "istream"
 #include "ostream"
+#include "ConnectionManager.h"
+
 class ClientHandler{
-    virtual void handleClient(std::istream inputStream,std::ostream) = 0;
+public:
+    virtual void handleClient(ConnectionManager* connectionManager) = 0;
 };
 #endif //MAILSTONE2_CLIENTHANDLER_H

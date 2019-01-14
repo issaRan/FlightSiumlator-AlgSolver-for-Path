@@ -1,8 +1,8 @@
 #ifndef MAILSTONE2_SEARCHER_H
 #define MAILSTONE2_SEARCHER_H
 
-#include "State.h"
 #include "ISearcher.h"
+#include "State.h"
 #include <queue>
 #include <list>
 #include <unordered_set>
@@ -11,14 +11,13 @@
 #include <algorithm>
 
 template<class S, class T>
-class CommonSearcher : public ISearcher<S, T> {
+class Searcher : public ISearcher<S, T> {
 protected:
-    //multiset<State<T> *> *opened;
     unordered_set<State<T> *> closed;
     int NumberOfNodesEvaluated{};
 
 public:
-    CommonSearcher() : NumberOfNodesEvaluated(0) {}
+    Searcher() : NumberOfNodesEvaluated(0) {}
 
     virtual S search(ISearchable<T> *searchable) = 0;
 
@@ -79,5 +78,4 @@ public:
         return v;
     }
 };
-
 #endif //MAILSTONE2_SEARCHER_H
