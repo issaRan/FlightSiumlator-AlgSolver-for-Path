@@ -6,13 +6,14 @@
 #define MAILSTONE2_ASTAR_H
 
 #include "ISearcher.h"
-#include "CommonSearcher.h"
 #include "Comparators.h"
 #include "MyPriorityQueue.h"
 #include "PrioritySearcher.h"
 #include "Comparators.h"
+#include "Searcher.h"
+
 template<class S, class T>
-class Astar : public CommonSearcher<S,T>{
+class Astar : public Searcher<S,T>{
     MyPriorityQueue<State<T> *,ManhattanDistances<T>> opened;
 public:
     S search(ISearchable<T> *searchable) {

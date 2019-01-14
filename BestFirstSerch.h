@@ -2,17 +2,16 @@
 #define MAILSTONE2_BESTFIRSTSERCH_H
 
 #include "ISearcher.h"
-#include "CommonSearcher.h"
+#include "Searcher.h"
 #include "MyPriorityQueue.h"
-#include "PrioritySearcher.h"
+//#include "PrioritySearcher.h"
 #include "Comparators.h"
 
 template<class S, class T>
-class BestFirstSerch : public PrioritySearcher<S,T>{
+class BestFirstSerch : public Searcher<S,T>{
     MyPriorityQueue<State<T> *, ComparePriority<T>> opened;
 public:
     S search(ISearchable<T> *searchable) {
-        unordered_set<State<T>*> &salim = this->closed;
         this->addToOpenList(searchable->getInitialState());
         while (!this->opened.empty()) {
             State<T> *n = this->popOpenList();

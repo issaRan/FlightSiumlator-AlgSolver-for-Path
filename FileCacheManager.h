@@ -13,75 +13,86 @@
 #include <sstream>
 #include "CacheManger.h"
 #include "StringConvert.h"
-
+#include <map>
 #define space " "
 
 template<class P, class S>
 class FileCacheManager : public CacheManger<P, S> {
-    unordered_map<string, string> problemsAndSolutions;
+    // map for mapping problems to solutions in vector<string> formats.
+    map<vector<string>, vector<string>> problemsAndSolutions;
+    // a converter for matrixes and their solution.
     StringConvert<P, S> *convert;
 public:
+    // Constructor.
     FileCacheManager(StringConvert<P, S> *convert) {
         this->convert = convert;
     }
-
+    //Checking if solution exists in the map.
     virtual bool isSolutionExist(P problem);
-
-    virtual S getSolution(P problem);
-
+    //Getting the solution of a given problem from a file.
+    virtual vector<string> getSolutionString(P problem);
+    //Saving a solution in the map and in the file.
     virtual void saveSolution(P problem, S solution);
-
+    //Loads all problems and solutions.
     void loadMap();
-
-    void saveOnFile(const string &problem, const string &solution);
-
+    //Saves a problem and a solution on the file in vector<string> format.
+    void saveOnFile(const vector<string> &problem, const vector<string> &solution);
+    //Splits a string to vector of strings using ',' character.
     vector<string> splitValues(const string &line);
 };
 
 template<class P, class S>
 bool FileCacheManager<P, S>::isSolutionExist(P problem) {
-    this->problemsAndSolutions.count(problem) != 0;
+    return this->problemsAndSolutions.count(this->convert->ProblemToString(problem)) != 0;
 }
-
 template<class P, class S>
-S FileCacheManager<P, S>::getSolution(P problem) {
-    string problemRepresentByString = this->convert->ProblemToString(problem);
+vector<string> FileCacheManager<P, S>::getSolutionString(P problem) {
+    vector<string> problemRepresentByString = this->convert->ProblemToString(problem);
     auto it = problemsAndSolutions.find(problemRepresentByString);
-    while (it != problemsAndSolutions.end()) {
+    if (it != problemsAndSolutions.end()) {
         if (it->first == problemRepresentByString) {
-            return this->convert->stringToSolution(it->second);
+            return it->second;
         }
     }
-    return NULL;
+    //return NULL;
 }
 
 template<class P, class S>
 void FileCacheManager<P, S>::saveSolution(P problem, S solution) {
-    string problemRepresentByString = this->convert->ProblemToString(problem);
-    string solutionRepresentByString = this->convert->solutionToString(solution);
+    vector<string> problemRepresentByString = this->convert->ProblemToString(problem);
+    vector<string> solutionRepresentByString = this->convert->solutionToString(solution);
     this->problemsAndSolutions[problemRepresentByString] = solutionRepresentByString;
     saveOnFile(problemRepresentByString, solutionRepresentByString);
 }
 
 template<class P, class S>
 void FileCacheManager<P, S>::loadMap() {
-    ifstream solutions;
+    ifstream solutions("solutionToProblem.txt");
     string line;
-    vector<string> problemsAnsSolutions;
+    vector<string> p, s;
     while (getline(solutions, line)) {
-        problemsAnsSolutions = splitValues(line);
-        this->problemsAndSolutions.insert(make_pair(problemsAnsSolutions[0], problemsAnsSolutions[1]));
+        do {
+            p.push_back(line);
+        } while (getline(solutions, line) && (line != "@EndOfProblem@"));
+        while (getline(solutions, line) && (line != "$EndOfSolution$"))
+            s.push_back(line);
     }
+        this->problemsAndSolutions.insert(make_pair(p, s));
 }
 
 template<class P, class S>
-void FileCacheManager<P, S>::saveOnFile(const string &problem, const string &solution) {
+void FileCacheManager<P, S>::saveOnFile(const vector<string> &problem, const vector<string> &solution) {
     ofstream sol;
     sol.open("solutionToProblem.txt", ios::app);
-    if (sol.is_open()) {
-        sol << problem << space << solution << "\n";
-        sol.close();
+    for (string str : problem){
+        sol << str << endl;
     }
+    sol << "@EndOfProblem@" << endl;
+    for (string str : solution){
+        sol << str << endl;
+    }
+    sol << "$EndOfSolution$" << endl;
+    sol.close();
 }
 
 template<class P, class S>

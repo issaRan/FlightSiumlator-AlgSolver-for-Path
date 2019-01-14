@@ -14,6 +14,5 @@ public:
     virtual State<T> *getInitialState()=0;
     virtual bool isGoalState(State<T> *state) = 0;
     virtual vector<State<T> *> getAllPossibleState(State<T> *state) = 0;
-    virtual T getGoal() = 0;
 };
 #endif //MAILSTONE2_ISEARCHABLE_H

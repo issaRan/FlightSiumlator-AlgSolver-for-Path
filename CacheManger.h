@@ -11,8 +11,11 @@ using namespace std;
 template <class P,class S>
 class CacheManger {
 public:
+    // Checks if the solution exists in the cache.
     virtual bool isSolutionExist(P problem) = 0;
-    virtual string getSolutionString(P problem) = 0;
+    // Returns the solution to the given problem from the cache.
+    virtual vector<string> getSolutionString(P problem) = 0;
+    // Save the solution in the cache.
     virtual void saveSolution(P problem, S solution) = 0;
 };
 

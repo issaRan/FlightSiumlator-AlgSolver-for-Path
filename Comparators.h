@@ -11,6 +11,7 @@
 template<class T>
 struct ComparePriority {
 public:
+    // Compares distances for algorithms such as BestFirstSearch.
     bool operator()(State<T>* a, State<T>* b){
         return a->getCost() > b->getCost();
     }
@@ -19,15 +20,9 @@ public:
 template<class T>
 struct ManhattanDistances {
 public:
-    bool operator()(State<T>* a, State<T>* b){
+    // Compares distances using heuristics for algorithms such as Astar.
+    bool operator()(State<T>* a, State<T>* b) {
         return a->getCost() + a->getHeuristic() > b->getCost() + b->getHeuristic();
-    }
-    double getHeuristic(pair<double, double> source){
-        double sum = 0;
-        sum += abs(source.first - this->goal.first);
-        sum += abs(source.second - this->goal.second);
-        return sum*10;
-
     }
 };
 #endif //MAILSTONE2_COMPAREPRIORITY_H

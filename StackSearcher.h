@@ -6,10 +6,10 @@
 #define MAILSTONE2_STACKSEARCHER_H
 
 #include <stack>
-#include "CommonSearcher.h"
+#include "Searcher.h"
 
 template<class S, class T>
-class StackSearcher : public CommonSearcher<S,T>{
+class StackSearcher : public Searcher<S,T>{
 };
 
 

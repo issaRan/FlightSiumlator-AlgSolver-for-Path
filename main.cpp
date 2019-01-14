@@ -40,8 +40,17 @@ int main(int argc, char* argv[]) {
     ISearchable<pair<int, int>> *m = new matrix(theMap, 3, 3, make_pair(0,0), make_pair(2,2));
     ISearcher<vector<string>, pair<int, int>> *s = new BestFirstSerch<vector<string>, pair<int,
             int>>();
-    vector<string> sason = s->search(m);
-    for (string i : sason){
+    Solver<matrix, vector<string>> *solver = new SearchableSolver(s);
+    FileCacheManager<matrix, vector<string>> cache(new matrixConvert());
+    vector<string> sason;
+    cache.loadMap();
+    if (cache.isSolutionExist(*m))
+        sason = cache.getSolutionString(*m);
+    else {
+        sason = solver->solve(m);
+        cache.saveSolution(*m, sason);
+    }
+    for (string i : sason) {
         cout << i << endl;
     }
     /*

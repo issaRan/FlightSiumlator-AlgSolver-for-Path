@@ -21,7 +21,7 @@ void MySerialServer::open(int port, ClientHandler *clinetHandler) {
         perror("ERROR on binding");
         exit(1);
     }
-    if (listen(this->sockfsd, 5) < 0) {
+    if (listen(this->sockfsd, SOMAXCONN) < 0) {
         perror("listen");
         exit(EXIT_FAILURE);
     }

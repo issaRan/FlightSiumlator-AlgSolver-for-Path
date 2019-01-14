@@ -14,7 +14,9 @@ private:
 public:
     matrix(int **arr, int height, int width, pair<int, int> source, pair<int,int> goal) : arr(arr), height(height),
     width(width), source(source), goal(goal) {}
-
+    pair<int, int> getSource(){
+        return this->source;
+    }
     int getWidth() {
         return this->width;
     }

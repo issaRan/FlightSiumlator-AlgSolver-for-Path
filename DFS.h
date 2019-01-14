@@ -7,12 +7,14 @@
 
 
 #include <stack>
-#include "StackSearcher.h"
+#include "Searcher.h"
+#include "ISearchable.h"
+//#include "StackSearcher.h"
 
 
 template<class S, class T>
-class DFS : public StackSearcher<S, T> {
-stack<State<T> *> opened;
+class DFS : public Searcher<S, T> {
+    stack<State<T> *> opened;
 public:
     S search(ISearchable<T>* searchable){
         // Add the initial to opened.

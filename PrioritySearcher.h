@@ -5,10 +5,10 @@
 #ifndef MAILSTONE2_PRIORITYSEARCHER_H
 #define MAILSTONE2_PRIORITYSEARCHER_H
 
-#include "CommonSearcher.h"
+#include "Searcher.h"
 
 template<class S, class T>
-class PrioritySearcher : public CommonSearcher<S, T> {
+class PrioritySearcher : public Searcher<S, T> {
     /*
     void adjustPriority(priority_queue<State<T>> openList, State<T> state) {
         State<T> nearByState = NULL;

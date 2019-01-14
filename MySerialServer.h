@@ -19,11 +19,14 @@
 using namespace std;
 class MySerialServer : public server_side::Server{
     int sockfsd;
-    ClientHandler *clientHandler;
-    bool online;
+    int newsockfd;
+    volatile bool* online;
 public:
-    void open(int port,ClientHandler* clinetHandler);
-    void serverConnection();
+    MySerialServer(){
+        this->online = new bool;
+    }
+    virtual void open(int port,ClientHandler* clinetHandler);
+    bool isOnline();
     void close();
 };
 

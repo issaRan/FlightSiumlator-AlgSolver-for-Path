@@ -1,3 +1,4 @@
+    }
 //
 // Created by issa on 1/13/19.
 //
@@ -10,7 +11,7 @@
 #include "Solver.h"
 #include "FileCacheManager.h"
 #include "Splitter.h"
-/*
+
 template<class P, class S>
 class matrixClientHandler : public ClientHandler {
     unsigned long row, colm, counter;
@@ -61,5 +62,4 @@ void matrixClientHandler<P, S>::handleClient(ConnectionManager *connectionManage
         connectionManager->sendLine(solution);
     }
 }
-*/
 #endif //MAILSTONE2_MATRIXCLIENTHANDLER_H
