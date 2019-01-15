@@ -5,7 +5,11 @@
 #include "ConnectionManager.h"
 
 string ConnectionManager::readLine() {
+    timeval timeout;
+    timeout.tv_sec = 0;
+    timeout.tv_usec = 0;
 
+    setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, (char *) &timeout, sizeof(timeout));
     /* Now read server response */
     bzero(this->buffer, 256);
     int n = read(this->sockfd, this->buffer, 255);
@@ -13,20 +17,22 @@ string ConnectionManager::readLine() {
         perror("ERROR reading from socket");
         exit(1);
     }
-    stringstream ss;
+
     string toSend;
-    ss << buffer;
-    ss >> toSend;
+    for(int i = 0; i< strlen(this->buffer)-1;i++){
+        if(this->buffer[i] != ' ') {
+            toSend += this->buffer[i];
+        }
+    }
     return toSend;
 }
 
-void ConnectionManager::sendLine(vector<string> msg) {
+void ConnectionManager::sendLine(string msg) {
     int n;
-    for (string str : msg) {
-        n = ::send(sockfd, (char *) str.c_str(), strlen((char *) str.c_str()), 0);
-        if (n < 0) {
-            perror("ERROR writing to socket");
-            exit(1);
-        }
+    n = ::send(sockfd, (char *) msg.c_str(), strlen((char *) msg.c_str()), 0);
+    if (n < 0) {
+        perror("ERROR writing to socket");
+        exit(1);
+
     }
 }

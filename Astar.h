@@ -23,6 +23,16 @@ public:
             State<T> *n = this->popOpenList();
             this->closed.insert(n);
             if (searchable->isGoalState(n)) {
+                for (State<T> *temp:this->closed) {
+                    delete temp;
+                }
+                this->closed.clear();
+                while (!opened.empty()) {
+                    State<T> *popped = opened.top();
+                    opened.pop();
+                    delete popped;
+                }
+                this->NumberOfNodesEvaluated = 0;
                 return this->backtrace(n);
             } else {
                 for (State<T> *s : searchable->getAllPossibleState(n)) {

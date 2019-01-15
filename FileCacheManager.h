@@ -14,39 +14,55 @@
 #include "CacheManger.h"
 #include "StringConvert.h"
 #include <map>
+#include <iostream>
+#include <mutex>
+
 #define space " "
 
-template<class P, class S>
-class FileCacheManager : public CacheManger<P, S> {
+template<class Problem, class S>
+class FileCacheManager : public CacheManger<Problem, S> {
     // map for mapping problems to solutions in vector<string> formats.
     map<vector<string>, vector<string>> problemsAndSolutions;
     // a converter for matrixes and their solution.
-    StringConvert<P, S> *convert;
+    StringConvert<Problem, S> *convert;
 public:
     // Constructor.
-    FileCacheManager(StringConvert<P, S> *convert) {
+    FileCacheManager(StringConvert<Problem, S> *convert) {
         this->convert = convert;
+        this->loadMap();
     }
+
     //Checking if solution exists in the map.
-    virtual bool isSolutionExist(P problem);
+    virtual bool isSolutionExist(Problem &problem);
+
     //Getting the solution of a given problem from a file.
-    virtual vector<string> getSolutionString(P problem);
+    virtual vector<string> getSolutionString(Problem& problem);
+
     //Saving a solution in the map and in the file.
-    virtual void saveSolution(P problem, S solution);
+    virtual void saveSolution(Problem& problem, S& solution);
+
     //Loads all problems and solutions.
     void loadMap();
+
     //Saves a problem and a solution on the file in vector<string> format.
     void saveOnFile(const vector<string> &problem, const vector<string> &solution);
+
     //Splits a string to vector of strings using ',' character.
     vector<string> splitValues(const string &line);
+
+    ~FileCacheManager() {
+        delete this->convert;
+    }
 };
 
 template<class P, class S>
-bool FileCacheManager<P, S>::isSolutionExist(P problem) {
+bool FileCacheManager<P, S>::isSolutionExist(P& problem) {
     return this->problemsAndSolutions.count(this->convert->ProblemToString(problem)) != 0;
 }
+
 template<class P, class S>
-vector<string> FileCacheManager<P, S>::getSolutionString(P problem) {
+vector<string> FileCacheManager<P, S>::getSolutionString(P &problem) {
+    cout << "get the Solution" << endl;
     vector<string> problemRepresentByString = this->convert->ProblemToString(problem);
     auto it = problemsAndSolutions.find(problemRepresentByString);
     if (it != problemsAndSolutions.end()) {
@@ -58,7 +74,7 @@ vector<string> FileCacheManager<P, S>::getSolutionString(P problem) {
 }
 
 template<class P, class S>
-void FileCacheManager<P, S>::saveSolution(P problem, S solution) {
+void FileCacheManager<P, S>::saveSolution(P& problem, S& solution) {
     vector<string> problemRepresentByString = this->convert->ProblemToString(problem);
     vector<string> solutionRepresentByString = this->convert->solutionToString(solution);
     this->problemsAndSolutions[problemRepresentByString] = solutionRepresentByString;
@@ -77,18 +93,18 @@ void FileCacheManager<P, S>::loadMap() {
         while (getline(solutions, line) && (line != "$EndOfSolution$"))
             s.push_back(line);
     }
-        this->problemsAndSolutions.insert(make_pair(p, s));
+    this->problemsAndSolutions.insert(make_pair(p, s));
 }
 
 template<class P, class S>
 void FileCacheManager<P, S>::saveOnFile(const vector<string> &problem, const vector<string> &solution) {
     ofstream sol;
     sol.open("solutionToProblem.txt", ios::app);
-    for (string str : problem){
+    for (string str : problem) {
         sol << str << endl;
     }
     sol << "@EndOfProblem@" << endl;
-    for (string str : solution){
+    for (string str : solution) {
         sol << str << endl;
     }
     sol << "$EndOfSolution$" << endl;
@@ -104,6 +120,5 @@ vector<string> FileCacheManager<P, S>::splitValues(const string &line) {
     vector<string> vstrings(begin, end);
     return vstrings;
 }
-
 
 #endif //MAILSTONE2_FILECACHEMANAGER_H

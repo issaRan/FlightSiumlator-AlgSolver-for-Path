@@ -26,6 +26,16 @@ public:
             if (!this->closedContains(n)) {
                 // Backtrace if goal is found.
                 if (searchable->isGoalState(n)) {
+                    for (State<T> *temp:this->closed) {
+                        delete temp;
+                    }
+                    this->closed.clear();
+                    while (!opened.empty()) {
+                        State<T> *popped = opened.top();
+                        opened.pop();
+                        delete popped;
+                    }
+                    this->NumberOfNodesEvaluated = 0;
                     return this->backtrace(n);
                 }
                     // Else, open n's successors.

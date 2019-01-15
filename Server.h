@@ -4,6 +4,11 @@
 #include "ClientHandler.h"
 namespace server_side {
     class Server {
+    protected:
+        struct  dataPass{
+            int sockfd;
+            ClientHandler *clientHandler;
+        };
     public:
         /**
          * to open the server
@@ -16,6 +21,10 @@ namespace server_side {
          * end the server operation.
          */
         virtual void close() = 0;
+
+        virtual ~Server(){
+
+        }
     };
 }
 #endif //MAILSTONE2_SERVER_H

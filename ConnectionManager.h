@@ -32,7 +32,7 @@ public:
 
     string readLine();
 
-    void sendLine(vector<string> msg);
+    void sendLine(string msg);
 
 
 };

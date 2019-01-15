@@ -1,10 +1,10 @@
 #include "MySerialServer.h"
 #include "ConnectionManager.h"
-
+/*
 void MySerialServer::open(int port, ClientHandler *clinetHandler) {
     *this->online = true;
     struct sockaddr_in serv_addr, clie_addr;
-    /* First call to socket() function */
+
     this->sockfsd = socket(AF_INET, SOCK_STREAM, 0);
 
     if (this->sockfsd < 0) {
@@ -48,7 +48,8 @@ void MySerialServer::open(int port, ClientHandler *clinetHandler) {
     thread t(f);
     t.join();
 }
-
+ */
+/*
 void MySerialServer::close() {
     *this->online = false;
     if(this->online){
@@ -60,3 +61,4 @@ void MySerialServer::close() {
 bool MySerialServer::isOnline() {
     return *this->online;
 }
+*/

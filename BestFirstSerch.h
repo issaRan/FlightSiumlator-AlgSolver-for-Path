@@ -8,15 +8,21 @@
 #include "Comparators.h"
 
 template<class S, class T>
-class BestFirstSerch : public Searcher<S,T>{
+class BestFirstSerch : public Searcher<S, T> {
     MyPriorityQueue<State<T> *, ComparePriority<T>> opened;
 public:
     S search(ISearchable<T> *searchable) {
+        this->NumberOfNodesEvaluated = 0;
         this->addToOpenList(searchable->getInitialState());
         while (!this->opened.empty()) {
             State<T> *n = this->popOpenList();
             this->closed.insert(n);
             if (searchable->isGoalState(n)) {
+                this->closed.clear();
+                while (!opened.empty()) {
+                    State<T> *popped = opened.top();
+                    opened.pop();
+                }
                 return this->backtrace(n);
             } else {
                 for (State<T> *s : searchable->getAllPossibleState(n)) {
@@ -34,8 +40,8 @@ public:
         auto t = this->closed.find(state);
         if (t != this->closed.end()) {
             if ((*t)->getCost() > state->getCost()) {
-                this->opened.remove(*t);
-                this->opened.push(state);
+                this->closed.erase(*t);
+                this->closed.insert(state);
             }
         }
     }
@@ -55,9 +61,10 @@ public:
     void addToOpenList(State<T> *state) {
         this->opened.push(state);
     }
-
+    /*
     // Check if opened contains a vertex.
     bool openContains(State<T> *state) {
+        //this->opened
         auto first = this->opened.cbegin();
         auto last = this->opened.cend();
         while (first != last) {
@@ -67,10 +74,10 @@ public:
         }
         return false;
     }
-
+    */
     bool closedContains(State<T> *state) {
         for (typename unordered_set<State<T> *>::iterator it = this->closed.begin();
-             it != this->closed.end(); it++) {
+            it != this->closed.end(); it++) {
             if (**it == *state) {
                 return true;
             }

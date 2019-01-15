@@ -17,13 +17,15 @@ class MyTestClientHandler : public ClientHandler {
     Splitter splitter;
     Solver<P, S> *solver;
     CacheManger<P, S> *cacheManger;
+    mutex mutexForLock;
 public:
     MyTestClientHandler(Solver<P, S> *solve, CacheManger<P, S> *cacheManger) {
         this->solver = solve;
         this->cacheManger = cacheManger;
     }
 
-    void handleClient(ConnectionManager *connectionManager){
+    void handleClient(int sockfd) {
+        ConnectionManager connectionManager(sockfd);
         unsigned long row, colm;
         unsigned long counter = 0;
         vector<vector<int>> valuesOfMatrix;
@@ -32,36 +34,77 @@ public:
         pair<int, int> enterInState;
         pair<int, int> exitInState;
         string line;
-        //this->cacheManger->loadMap();
-        line = connectionManager->readLine();
+        line = connectionManager.readLine();
         while (line != "end\r\n") {
             if (line == "end") {
                 break;
             }
             valuesOfLine = this->splitter.splitBy(line);
-            for (const auto &i : valuesOfLine) {
+            for (auto &i : valuesOfLine) {
+                while (i.at(0) == ' ')
+                    i = i.substr(1);
                 matrixByLine.push_back(stoi(i));
             }
             valuesOfLine.clear();
             valuesOfMatrix.push_back(matrixByLine);
             matrixByLine.clear();
-            line = connectionManager->readLine();
+            line = connectionManager.readLine();
             counter++;
         }
         colm = valuesOfMatrix[0].size();
         exitInState = make_pair(valuesOfMatrix[counter - 1][0], valuesOfMatrix[counter - 1][1]);
         enterInState = make_pair(valuesOfMatrix[counter - 2][0], valuesOfMatrix[counter - 2][1]);
-        int **theMatrix = new int *[row];
-        for (int i = 0; i < row; i++)
+        int **theMatrix = new int *[counter - 2];
+        for (int i = 0; i < counter - 2; i++)
             theMatrix[i] = new int[colm];
-        matrix *m = new matrix(theMatrix, row, colm, enterInState, exitInState);
+        for (int i = 0; i < counter - 2; i++) {
+            for (int j = 0; j < colm + 1; j++) {
+                int score = valuesOfMatrix[i][j];
+                theMatrix[i][j] = valuesOfMatrix[i][j];
+            }
+        }
+        auto *m = new matrix(theMatrix, counter - 2, colm, enterInState, exitInState);
+        S solution = this->solver->solve(m);
+        this->cacheManger->saveSolution(*m, solution);
+        string str;
+        for (auto &it : solution) {
+            str += it;
+            if (it != *(--solution.end())) {
+                str += " ";
+            }
+        }
+        connectionManager.sendLine(str);
+        //vector<string> solution = cacheManger->getSolutionString(*m);
+        //string str;
+        //for (auto &it : solution) {
+          //  str += it;
+            //if (it != *(solution.end()))
+              //  str += " ";
+        //}
+        //connectionManager.sendLine(str);
+        //mutexForLock.lock();
+        /*
         if (cacheManger->isSolutionExist(*m)) {
-            connectionManager->sendLine(cacheManger->getSolutionString(*m));
-        } else if (!line.empty()) {
+        } else {
             S solution = this->solver->solve(m);
             this->cacheManger->saveSolution(*m, solution);
-            connectionManager->sendLine(this->cacheManger->getSolutionString(*m));
+            string str;
+            for (auto &it : solution) {
+                str += it;
+                if (it != *(--solution.end())) {
+                    str += " ";
+                }
+            }
+            connectionManager.sendLine(str);
         }
+        mutexForLock.unlock();
+         */
+        delete m;
+    }
+
+    ~MyTestClientHandler() {
+        delete solver;
+        delete cacheManger;
     }
 };
 

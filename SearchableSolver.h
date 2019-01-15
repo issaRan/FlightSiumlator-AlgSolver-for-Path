@@ -5,6 +5,7 @@
 #ifndef MAILSTONE2_SEARCHABLESOLVER_H
 #define MAILSTONE2_SEARCHABLESOLVER_H
 
+#include <iostream>
 #include "Solver.h"
 #include "ISearcher.h"
 #include "ISearchable.h"
@@ -13,13 +14,14 @@
 //template<class S, class T>
 class SearchableSolver : public Solver<matrix, vector<string>> {
     ISearcher<vector<State<pair<int, int>>*>,pair<int,int>> *searcher;
-    //ISearchable<T> *iSearchable;
 public:
     SearchableSolver(ISearcher<vector<State<pair<int, int>>*>,pair<int,int>> * search){
         this->searcher = search;
     }
     vector<string> solve(matrix* problem){
         vector<State<pair<int, int>>*> v = this->searcher->search(problem);
+        cout << "Nodes " << this->searcher->getNumberOfNodesEvaluated() << endl;
+        cout << "Cost " << this->searcher->getShortestCost() << endl;
         vector<string> vStr;
         vector<State<pair<int, int>>*>::iterator father;
         for (vector<State<pair<int, int>>*>::iterator current = v.begin();
@@ -48,6 +50,10 @@ public:
         }
         return vStr;
     }
+    ~SearchableSolver(){
+
+    }
+
 };
 
 

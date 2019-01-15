@@ -10,7 +10,7 @@ class State {
     T state;
     double cost;
     double heuristic;
-    State<T> *cameFrom = NULL;
+    State<T> *cameFrom = nullptr;
 public:
     State(T State) : state(State) {}
 

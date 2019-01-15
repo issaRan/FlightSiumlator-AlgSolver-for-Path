@@ -14,7 +14,8 @@ template<class S, class T>
 class Searcher : public ISearcher<S, T> {
 protected:
     unordered_set<State<T> *> closed;
-    int NumberOfNodesEvaluated{};
+    int NumberOfNodesEvaluated = 0;
+    double shortestCost = 0;
 
 public:
     Searcher() : NumberOfNodesEvaluated(0) {}
@@ -23,6 +24,9 @@ public:
 
     int getNumberOfNodesEvaluated() {
         return this->NumberOfNodesEvaluated;
+    }
+    double getShortestCost(){
+        return this->shortestCost;
     }
 
     // Pop and return the top vertex in the opened.
@@ -52,6 +56,7 @@ public:
     }
 
     S backtrace(State<T> *state) {
+        this->shortestCost = state->getCost();
         S v = {state};
         State<T> *father;
         while ((state = state->getFather()) != NULL) {

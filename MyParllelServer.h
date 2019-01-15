@@ -16,13 +16,25 @@
 #include <time.h>
 #include <vector>
 
-class MyParllelServer: public server_side::Server{
-    int port{};
-    ClientHandler* clientHandler{};
+#include <netinet/in.h>
+#include <strings.h>
+#include <unistd.h>
+#include <thread>
+#include "Server.h"
+#include "Server.h"
+class MyParllelServer : public server_side::Server {
+    struct dataPass *passingData = new dataPass();
+    int sockfd;
+    vector <pthread_t> threads;
 public:
-    void open(int port, ClientHandler* clientHandler) override;
-    static void start(int server, ClientHandler *);
+    void open(int port, ClientHandler *cH);
+
+    void stop();
+
     void close();
-    bool stop();
+
+    static void* threadManager (void* data);
+
+    virtual ~MyParllelServer();
 
 };

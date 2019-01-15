@@ -5,12 +5,14 @@
 #ifndef MAILSTONE2_MATRIXCONVERT_H
 #define MAILSTONE2_MATRIXCONVERT_H
 
+#include <sstream>
 #include "StringConvert.h"
 #include "matrix.h"
+#include "Splitter.h"
 
 class matrixConvert : public StringConvert<matrix, vector<string>> {
 
-    vector<string> ProblemToString(matrix problem) {
+    vector<string> ProblemToString(matrix &problem) {
         vector<string> v;
         ostringstream ss;
         int **arr = problem.getArr();
@@ -24,7 +26,7 @@ class matrixConvert : public StringConvert<matrix, vector<string>> {
             ss.str("");
             ss.clear();
         }
-        ss << problem.getSource().first << ", " << problem.getSource().second;
+        ss<< problem.getSource().first << ", " << problem.getSource().second;
         v.push_back(ss.str());
         ss.str("");
         ss.clear();

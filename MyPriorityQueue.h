@@ -9,6 +9,7 @@
 
 #include <queue>
 #include <algorithm>
+#include "State.h"
 
 
 template<class T,class toComapre>
@@ -26,11 +27,19 @@ public:
         }
         return;
     }
-
+    /*
     bool contains(T value) {
         typename std::vector<T>::iterator it = std::find(this->c.begin(), this->c.end(), value);
         return it != this->c.end();
     }
+    */
+    bool contains(T value){
+        for(auto i : this->c){
+            if (i->getState() == value->getState())
+                return true;
+        }
+        return false;
+}
 
     typename std::vector<T>::iterator findIt(T value) {
         return find(this->c.begin(), this->c.end(), value);

@@ -5,18 +5,24 @@
 #include <map>
 #include <queue>
 #include "ISearchable.h"
+#include <ostream>
+static int counter = 0;
 class matrix : public ISearchable<pair<int, int>> {
 private:
     pair<int, int> source, goal;
     int height;
     int width;
     int **arr;
+    vector<State<pair<int, int>> *> theTrash;
 public:
-    matrix(int **arr, int height, int width, pair<int, int> source, pair<int,int> goal) : arr(arr), height(height),
-    width(width), source(source), goal(goal) {}
-    pair<int, int> getSource(){
+    matrix(int **arr, int height, int width, pair<int, int> source, pair<int, int> goal) : arr(arr), height(height),
+                                                                                           width(width), source(source),
+                                                                                           goal(goal) {}
+
+    pair<int, int> getSource() {
         return this->source;
     }
+
     int getWidth() {
         return this->width;
     }
@@ -30,8 +36,9 @@ public:
     }
 
     State<pair<int, int>> *getInitialState() {
-        State<pair<int, int>> *startState= new State<pair<int, int>>(make_pair(0, 0));
+        State<pair<int, int>> *startState = new State<pair<int, int>>(make_pair(0, 0));
         startState->setCost(arr[0][0]);
+        theTrash.push_back(startState);
         return startState;
     }
 
@@ -43,11 +50,12 @@ public:
     }
 
     vector<State<pair<int, int>> *> getAllPossibleState(State<pair<int, int>> *state) {
-        vector<State<pair<int, int>>*> states;
+        vector<State<pair<int, int>> *> states;
         // i, j coordinates.
         int i = state->getState().first, j = state->getState().second;
         // Up.
         if (i != 0 && arr[i - 1][j] >= 0) {
+            counter++;
             State<pair<int, int>> *up = new State<pair<int, int>>(make_pair(i - 1, j));
             up->setCost(this->arr[i - 1][j] + state->getCost());
             this->setHeuristic(up);
@@ -55,6 +63,7 @@ public:
         }
         // Down.
         if (i != this->height - 1 && arr[i + 1][j] >= 0) {
+            counter++;
             State<pair<int, int>> *down = new State<pair<int, int>>(make_pair(i + 1, j));
             down->setCost(this->arr[i + 1][j] + state->getCost());
             this->setHeuristic(down);
@@ -62,31 +71,47 @@ public:
         }
         // Left.
         if (j != 0 && arr[i][j - 1] >= 0) {
+            counter++;
             State<pair<int, int>> *left = new State<pair<int, int>>(make_pair(i, j - 1));
             left->setCost(this->arr[i][j - 1] + state->getCost());
             this->setHeuristic(left);
             states.push_back(left);
         }
         // Right.
-        if (j != width - 1 && arr[i][j + 1] >= 0) {
+        if (j < width - 1 && arr[i][j + 1] > -1) {
+            counter++;
             State<pair<int, int>> *right = new State<pair<int, int>>(make_pair(i, j + 1));
             right->setCost(this->arr[i][j + 1] + state->getCost());
             this->setHeuristic(right);
             states.push_back(right);
         }
         // Set the pie.
-        for (vector<State<pair<int, int>>*>::iterator it = states.begin(); it != states.end(); it++) {
+        for (vector<State<pair<int, int>> *>::iterator it = states.begin(); it != states.end(); it++) {
             (*it)->setcameFrom(state);
+            theTrash.push_back(*it);
         }
+        cout << counter <<"\n";
         return states;
 
     }
-    pair<int, int> getGoal(){
+
+    pair<int, int> getGoal() {
         return this->goal;
     }
-    void setHeuristic(State<pair<int, int>> *state){
+
+    void setHeuristic(State<pair<int, int>> *state) {
         pair<double, double> current = state->getState();
         state->setHeuristic(abs(current.first - this->goal.first) + abs(current.second - this->goal.second));
+    }
+
+    ~matrix() {
+        for (int i = 0; i < this->height; i++) {
+            delete[] this->arr[i];
+        }
+        delete[] arr;
+        for (auto &it : theTrash) {
+            delete it;
+        }
     }
 };
 

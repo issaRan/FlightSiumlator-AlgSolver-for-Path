@@ -1,113 +1,86 @@
-
 #include "MyParllelServer.h"
-#include <iostream>
-#include <sys/types.h>
-#include <algorithm>
-#include <unistd.h>
-#include <list>
-#include <sys/socket.h>
-#include <netdb.h>
-#include <arpa/inet.h>
-#include <string.h>
-#include <cerrno>
-#include <stack>
-#include <string>
-#include <iostream>
-#include <netinet/in.h>
+#include <cstring>
+void MyParllelServer::open(int port, ClientHandler *cH) {
+    int sockfd, portno;
+    struct sockaddr_in serv_addr;
 
-using namespace std;
+    /* First call to socket() function */
+    sockfd = socket(AF_INET, SOCK_STREAM, 0);
 
-struct thread_data {
-    int sock;
-    ClientHandler *ch;
-};
-
-void MyParllelServer::open(int port, ClientHandler *clientHandler) {
-    this->port = port;
-    this->clientHandler = clientHandler;
-    int server_fd;
-    struct sockaddr_in address{};
-    server_fd = socket(AF_INET, SOCK_STREAM, 0);
-    address.sin_family = AF_INET;
-    address.sin_addr.s_addr = INADDR_ANY;
-    address.sin_port = htons(port);
-
-    int n = 1;
-    setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &n, sizeof(int));
-    if (bind(server_fd, (struct sockaddr *) &address, sizeof(address)) == -1) {
-        perror("socket bind");
+    if (sockfd < 0) {
+        perror("ERROR opening socket");
         exit(1);
     }
+    /*this->passingData->sockfd = sockfd;*/
+    this->passingData->clientHandler = cH;
+    /* Initialize socket structure */
+    bzero((char *) &serv_addr, sizeof(serv_addr));
+    portno = port;
 
-    if (listen(server_fd, 5) == -1) {
-        perror("socket listen");
+    serv_addr.sin_family = AF_INET;
+    serv_addr.sin_addr.s_addr = INADDR_ANY;
+    serv_addr.sin_port = htons(portno);
+    /* Now bind the host address using bind() call.*/
+    if (bind(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
+        cout << "error in bind" << endl;
+        perror("ERROR on binding");
         exit(1);
     }
-
-    start(server_fd, clientHandler);
-//    rc = pthread_create(&thread, nullptr, start, my_thread_data);
-//    if (rc) {
-//        cout << "Error! unable to create thread";
-//        exit(1);
-//    }
-}
-
-bool MyParllelServer::stop() {
-    cout << "lalal" << endl;//TODO: check what needed to be in this function
-}
-
-void *start_thread_client(void *params) {
-    auto data = (thread_data *) params;
-    data->ch->handleClient(data->sock);
-    delete data;
-}
-
-void MyParllelServer::start(int server_sock, ClientHandler *ch) {
-    stack<pthread_t> threads_stack;
-    sockaddr_in address{};
-    int addrlen = sizeof(address);
-
+    struct sockaddr_in cli_addr;
+    int clilen, cliSock;
+    listen(sockfd, SOMAXCONN);
+    clilen = sizeof(cli_addr);
     timeval timeout;
-    timeout.tv_sec = 10;
+    timeout.tv_sec = 30;
     timeout.tv_usec = 0;
-    setsockopt(server_sock, SOL_SOCKET, SO_RCVTIMEO, (char *) &timeout, sizeof(timeout));
 
-    int new_socket;
+    setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, (char *)&timeout, sizeof(timeout));
     while (true) {
-        timeout.tv_sec = 0;
+        /*
+        timeval timeout;
+        timeout.tv_sec = 30;
         timeout.tv_usec = 0;
-        setsockopt(server_sock, SOL_SOCKET, SO_RCVTIMEO, (char *) &timeout, sizeof(timeout));
-        if ((new_socket = accept(server_sock,
-                                 (struct sockaddr *) &address,
-                                 (socklen_t *) &addrlen)) < 0) {
-            if (errno == EWOULDBLOCK || errno == EAGAIN) {
-                cout << "timeout" << endl;
+
+        setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, (char *)&timeout, sizeof(timeout));
+         */
+        cliSock = accept(sockfd, (struct sockaddr *) &cli_addr, (socklen_t *) &clilen);
+        this->passingData->sockfd = cliSock;
+        if (cliSock< 0)	{
+            if (errno == EWOULDBLOCK)	{
+                stop();
+                break;
+
+            }	else	{
+                stop();
                 break;
             }
-            perror("accept");
-            exit(EXIT_FAILURE);
         }
-        setsockopt(new_socket, SOL_SOCKET, SO_RCVTIMEO, (char *) &timeout, sizeof(timeout));
-
-        auto data = new thread_data;
-        data->ch = ch;
-        data->sock = new_socket;
-        pthread_t trid;
-        if (pthread_create(&trid, nullptr, start_thread_client, data) < 0) {
-            perror("error on creating thread");
-            exit(1);
+        pthread_t pthread;
+        if (pthread_create(&pthread, nullptr, MyParllelServer::threadManager, passingData) != 0) {
+            perror("thread failed");
         }
-
-        threads_stack.push(trid);
-
+        cout <<"added\n";
+        this->threads.push_back(pthread);
     }
 
-    while (!threads_stack.empty()) {
-        pthread_join(threads_stack.top(), nullptr);
-        threads_stack.pop();
-    }
+}
 
-    ::close(server_sock);
+void *MyParllelServer::threadManager(void *data) {
+    struct dataPass *passingData = (struct dataPass *) data;
+    passingData->clientHandler->handleClient(passingData->sockfd);
+    //::close(passingData->sockfd);
+}
+
+void MyParllelServer::stop() {
+    for (unsigned long thread : this->threads) {
+        pthread_join(thread, nullptr);
+    }
+    ::close(sockfd);
+
+}
+
+MyParllelServer::~MyParllelServer() {
+    delete(this->passingData);
 }
 
 void MyParllelServer::close() {
