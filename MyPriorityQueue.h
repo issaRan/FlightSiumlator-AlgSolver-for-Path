@@ -12,7 +12,7 @@
 #include "State.h"
 
 
-template<class T,class toComapre>
+template<class T, class toComapre>
 class MyPriorityQueue : public std::priority_queue<T, std::vector<T>, toComapre> {
 private:
 
@@ -27,22 +27,30 @@ public:
         }
         return;
     }
+
     /*
     bool contains(T value) {
         typename std::vector<T>::iterator it = std::find(this->c.begin(), this->c.end(), value);
         return it != this->c.end();
     }
     */
-    bool contains(T value){
-        for(auto i : this->c){
+    bool contains(T value) {
+        for (auto i : this->c) {
             if (i->getState() == value->getState())
                 return true;
         }
         return false;
-}
+    }
 
     typename std::vector<T>::iterator findIt(T value) {
-        return find(this->c.begin(), this->c.end(), value);
+        for (typename std::vector<T>::iterator it = this->c.begin(); it != this->c.end(); it++) {
+            if ((**it) == *value)
+                return it;
+        }
+    }
+
+    std::vector<T> getContainer() {
+        return this->c;
     }
 
 };

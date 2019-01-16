@@ -58,7 +58,7 @@ public:
         for (int i = 0; i < counter - 2; i++)
             theMatrix[i] = new int[colm];
         for (int i = 0; i < counter - 2; i++) {
-            for (int j = 0; j < colm + 1; j++) {
+            for (int j = 0; j < colm; j++) {
                 int score = valuesOfMatrix[i][j];
                 theMatrix[i][j] = valuesOfMatrix[i][j];
             }
@@ -68,10 +68,7 @@ public:
         this->cacheManger->saveSolution(*m, solution);
         string str;
         for (auto &it : solution) {
-            str += it;
-            if (it != *(--solution.end())) {
-                str += " ";
-            }
+            str += it + " ";
         }
         connectionManager.sendLine(str);
         //vector<string> solution = cacheManger->getSolutionString(*m);

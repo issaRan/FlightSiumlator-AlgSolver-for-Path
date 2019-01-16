@@ -1,5 +1,6 @@
 #include "MyParllelServer.h"
 #include <cstring>
+
 void MyParllelServer::open(int port, ClientHandler *cH) {
     int sockfd, portno;
     struct sockaddr_in serv_addr;
@@ -30,27 +31,30 @@ void MyParllelServer::open(int port, ClientHandler *cH) {
     int clilen, cliSock;
     listen(sockfd, SOMAXCONN);
     clilen = sizeof(cli_addr);
+    cliSock = accept(sockfd, (struct sockaddr *) &cli_addr, (socklen_t *) &clilen);
+    this->passingData->sockfd = cliSock;
+    if (cliSock >= 0) {
+        this->passingData->sockfd = cliSock;
+        pthread_t pthread;
+        if (pthread_create(&pthread, nullptr, MyParllelServer::threadManager, passingData) != 0) {
+            perror("thread failed");
+        }
+        cout << "added\n";
+        this->threads.push_back(pthread);
+    }
     timeval timeout;
     timeout.tv_sec = 30;
     timeout.tv_usec = 0;
 
-    setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, (char *)&timeout, sizeof(timeout));
+    setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, (char *) &timeout, sizeof(timeout));
     while (true) {
-        /*
-        timeval timeout;
-        timeout.tv_sec = 30;
-        timeout.tv_usec = 0;
-
-        setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, (char *)&timeout, sizeof(timeout));
-         */
         cliSock = accept(sockfd, (struct sockaddr *) &cli_addr, (socklen_t *) &clilen);
         this->passingData->sockfd = cliSock;
-        if (cliSock< 0)	{
-            if (errno == EWOULDBLOCK)	{
+        if (cliSock < 0) {
+            if (errno == EWOULDBLOCK) {
                 stop();
                 break;
-
-            }	else	{
+            } else {
                 stop();
                 break;
             }
@@ -59,7 +63,7 @@ void MyParllelServer::open(int port, ClientHandler *cH) {
         if (pthread_create(&pthread, nullptr, MyParllelServer::threadManager, passingData) != 0) {
             perror("thread failed");
         }
-        cout <<"added\n";
+        cout << "added\n";
         this->threads.push_back(pthread);
     }
 
@@ -80,7 +84,7 @@ void MyParllelServer::stop() {
 }
 
 MyParllelServer::~MyParllelServer() {
-    delete(this->passingData);
+    delete (this->passingData);
 }
 
 void MyParllelServer::close() {

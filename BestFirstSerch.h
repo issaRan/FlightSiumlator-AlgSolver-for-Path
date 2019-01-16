@@ -28,7 +28,7 @@ public:
                 for (State<T> *s : searchable->getAllPossibleState(n)) {
                     if (!this->opened.contains(s) && !this->closedContains(s)) {
                         this->addToOpenList(s);
-                    } else if (!this->opened.contains(s)) {
+                    } else if (!this->closedContains(s)) {
                         updateStatePriority(s);
                     }
                 }
@@ -37,11 +37,11 @@ public:
     }
 
     void updateStatePriority(State<T> *state) {
-        auto t = this->closed.find(state);
-        if (t != this->closed.end()) {
+        if (this->opened.contains(state)) {
+            auto t = this->opened.findIt(state);
             if ((*t)->getCost() > state->getCost()) {
-                this->closed.erase(*t);
-                this->closed.insert(state);
+                this->opened.remove(*t);
+                this->opened.push(state);
             }
         }
     }
